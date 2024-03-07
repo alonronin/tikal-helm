@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "my-app-chart.fullname" . }}-mysql
+  labels:
+    app: mysql
+    test: {{ .Values.test.value }}
+  {{- include "my-app-chart.labels" . | nindent 4 }}
+
+spec:
+  replicas: {{ .Values.mysql.replicas }}
+  selector:
+    matchLabels:
+      app: mysql
+    {{- include "my-app-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: mysql
+      {{- include "my-app-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        envFrom:
+        - secretRef:
+            name: {{ include "my-app-chart.fullname" . }}-secret-mysql
+        image: {{ .Values.mysql.mysql.image.repository }}:{{ .Values.mysql.mysql.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.mysql.mysql.imagePullPolicy }}
+        name: mysql
+        ports:
+        - containerPort: {{ .Values.mysql.ports.port }}
+          name: mysql
+        resources: {}

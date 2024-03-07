@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "my-app-chart.fullname" . }}-node
+  labels:
+    app: node
+  {{- include "my-app-chart.labels" . | nindent 4 }}
+
+spec:
+  replicas: {{ .Values.node.replicas }}
+  selector:
+    matchLabels:
+      app: node
+    {{- include "my-app-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: node
+      {{- include "my-app-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        envFrom:
+        - secretRef:
+            name: {{ include "my-app-chart.fullname" . }}-secret-node
+        image: {{ .Values.node.node.image.repository }}:{{ .Values.node.node.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.node.node.imagePullPolicy }}
+        name: node
+        ports:
+        - containerPort: {{ .Values.node.ports.port }}
+          name: node
+        resources: {}

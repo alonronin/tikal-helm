@@ -1,0 +1,34 @@
+node:
+  node:
+    image:
+        repository: node
+        tag: latest
+    imagePullPolicy: IfNotPresent
+  ports:
+        port: 3000
+        targetPort: 3000
+  replicas: 1
+  type: ClusterIP
+
+secretNode:
+  dbName: ""
+  dbPassword: ""
+
+mysql:
+  mysql:
+    image:
+      repository: mysql
+      tag: 8.0
+    imagePullPolicy: IfNotPresent
+  ports:
+      port: 3306
+      targetPort: 3306
+  replicas: 1
+  type: ClusterIP
+
+secretMysql:
+  mysqlDatabase: "db"
+  mysqlRootPassword: ""
+
+pvc:
+  enable: false
